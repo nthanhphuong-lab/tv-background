@@ -1,0 +1,59 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Ảnh nền */
+.bg {
+  position: fixed;
+  inset: 0;
+  background-image: url('assets/bg.jpg'); /* Đường dẫn tới ảnh của bạn */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+/* Lớp chữ overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  color: white;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+  text-align: center;
+  pointer-events: none;
+}
+
+.overlay h1 {
+  font-size: clamp(24px, 4vw, 72px);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+#clock {
+  font-size: clamp(18px, 2.5vw, 36px);
+  opacity: 0.9;
+}
+
+/* Hiệu ứng nền mờ nhẹ */
+.overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.2), rgba(0,0,0,0.3));
+  z-index: -1;
+}
