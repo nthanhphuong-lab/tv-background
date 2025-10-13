@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TV Background</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+
+  <div class="overlay">
+    <h1>Chào mừng đến với AGU</h1>
+    <p id="clock"></p>
+  </div>
+
+  <script>
+    // Hiển thị đồng hồ thời gian thực
+    function updateClock() {
+      const el = document.getElementById('clock');
+      const d = new Date();
+      el.textContent = d.toLocaleTimeString('vi-VN', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
