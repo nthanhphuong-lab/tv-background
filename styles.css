@@ -15,7 +15,7 @@ html, body {
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('assets/bg.jpg'); /* Đường dẫn ảnh của bạn */
+  background-image: url('assets/bg.png'); /* Đường dẫn ảnh của bạn */
   background-size: cover;      /* phủ kín màn hình */
   background-position: center; /* canh giữa ảnh */
   background-repeat: no-repeat;
