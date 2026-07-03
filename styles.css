@@ -1,49 +1,33 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AGU Network</title>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  overflow: hidden;
+}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      overflow: hidden;
-    }
+.screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
 
-    .screen {
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .screen img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;      /* Hiện đầy đủ hình, không bị cắt */
-      object-position: center;  /* Canh giữa */
-      display: block;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="screen">
-    <img src="assets/AGU-network-AI-v2.png" alt="AGU Network">
-  </div>
-</body>
-</html>
+.screen img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;       /* hiện đủ hình, không bị cắt */
+  object-position: center;   /* canh giữa màn hình */
+  display: block;
+}
