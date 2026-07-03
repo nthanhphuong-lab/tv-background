@@ -3,13 +3,216 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AGU Network</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Sơ đồ mạng AGU động</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <div class="screen">
-    <img src="./assets/AGU network AI v6.png" alt="AGU Network">
+  <div class="page">
+
+    <div class="toolbar">
+      <button onclick="toggleTraffic()">Bật / Tắt hiệu ứng</button>
+      <button onclick="toggleFullscreen()">Toàn màn hình</button>
+      <button onclick="setSpeed('slow')">Chậm</button>
+      <button onclick="setSpeed('normal')">Bình thường</button>
+      <button onclick="setSpeed('fast')">Nhanh</button>
+    </div>
+
+    <div id="mapWrap" class="map-wrap speed-normal">
+
+      <!-- Hình sơ đồ mạng nền -->
+      <img src="network.png" class="network-img" alt="Sơ đồ mạng Trường Đại học An Giang" />
+
+      <!-- Lớp hiệu ứng đường truyền -->
+      <!-- ViewBox phải đúng theo tỷ lệ hình. Hình hiện tại dùng 1650 x 928 -->
+      <svg class="traffic-layer" viewBox="0 0 1650 928" preserveAspectRatio="xMidYMid meet">
+
+        <!-- ================= INTERNET / ISP -> PEPLINK ================= -->
+
+        <path class="flow internet" d="M270 120 L560 195" />
+        <path class="flow internet delay-1" d="M365 105 L585 195" />
+        <path class="flow internet delay-2" d="M465 100 L610 195" />
+        <path class="flow internet delay-3" d="M565 100 L640 195" />
+        <path class="flow internet delay-4" d="M665 100 L690 195" />
+        <path class="flow internet delay-5" d="M770 100 L740 195" />
+        <path class="flow internet delay-1" d="M875 105 L765 195" />
+        <path class="flow internet delay-2" d="M980 110 L790 195" />
+        <path class="flow internet delay-3" d="M1080 120 L810 195" />
+
+        <!-- Peplink -> Firewall -->
+        <path class="flow backbone red" d="M690 215 L690 285" />
+
+        <!-- Firewall -> Core Layer -->
+        <path class="flow backbone red delay-1" d="M690 315 L690 390" />
+
+        <!-- ================= CORE HA / MLAG ================= -->
+
+        <path class="flow ha red fast-line" d="M620 395 L805 395" />
+        <path class="flow ha red reverse delay-2" d="M805 410 L620 410" />
+
+        <!-- ================= CORE -> DISTRIBUTION ================= -->
+
+        <path class="flow core" d="M610 430 L500 515" />
+        <path class="flow core delay-1" d="M650 430 L610 515" />
+        <path class="flow core delay-2" d="M720 430 L760 515" />
+        <path class="flow core delay-3" d="M800 430 L910 515" />
+
+        <path class="flow core reverse delay-2" d="M500 515 L610 430" />
+        <path class="flow core reverse delay-3" d="M910 515 L800 430" />
+
+        <!-- ================= DISTRIBUTION -> ACCESS LAYER ================= -->
+
+        <!-- Khu văn phòng khoa -->
+        <path class="flow access" d="M500 535 L330 610" />
+
+        <!-- Khu hội trường -->
+        <path class="flow access delay-1" d="M520 535 L455 610" />
+
+        <!-- Khối nhà A -->
+        <path class="flow access delay-2" d="M610 535 L575 610" />
+
+        <!-- Khối nhà B -->
+        <path class="flow access delay-3" d="M650 535 L700 610" />
+
+        <!-- Khối nhà C -->
+        <path class="flow access delay-4" d="M760 535 L825 610" />
+
+        <!-- Khối nhà D -->
+        <path class="flow access delay-5" d="M790 535 L950 610" />
+
+        <!-- Khối Thí nghiệm TH -->
+        <path class="flow access delay-1" d="M900 535 L1070 610" />
+
+        <!-- Khối Thư viện -->
+        <path class="flow access delay-2" d="M500 535 L335 720" />
+
+        <!-- Khối Hiệu bộ HB1/HB2 -->
+        <path class="flow access delay-3" d="M600 535 L470 720" />
+
+        <!-- Khu ngoài trời -->
+        <path class="flow access delay-4" d="M700 535 L610 720" />
+
+        <!-- Khu thể thao -->
+        <path class="flow access delay-5" d="M800 535 L760 720" />
+
+        <!-- Khu thực nghiệm -->
+        <path class="flow access delay-1" d="M900 535 L905 720" />
+
+        <!-- Khoa sư phạm -->
+        <path class="flow access delay-2" d="M910 535 L1040 720" />
+
+        <!-- Khu nhà khách -->
+        <path class="flow access delay-3" d="M920 535 L1160 720" />
+
+        <!-- ================= CORE -> DATA CENTER / SERVER ================= -->
+
+        <path class="flow server" d="M810 405 L1190 405 L1190 1500" />
+
+        <!-- Tuyến core sang khối dịch vụ bên phải -->
+        <path class="flow server delay-2" d="M810 390 L1220 390 L1220 150" />
+
+        <!-- Server / Services chạy về Core -->
+        <path class="flow server reverse delay-3" d="M1220 260 L850 400" />
+
+        <!-- ================= CORE -> DMZ ================= -->
+
+        <path class="flow vpn delay-1" d="M730 315 L1030 315" />
+        <path class="flow vpn reverse delay-4" d="M1030 330 L730 330" />
+
+        <!-- ================= CORE -> VPN / KTX ================= -->
+
+        <path class="flow vpn" d="M1030 320 L1385 320 L1385 180" />
+        <path class="flow vpn reverse delay-2" d="M1385 220 L1030 350" />
+
+        <!-- ================= CORE -> CAMERA ================= -->
+
+        <path class="flow camera" d="M900 535 L1220 690" />
+        <path class="flow camera delay-2" d="M1220 690 L1300 690" />
+        <path class="flow camera reverse delay-4" d="M1300 710 L900 550" />
+
+        <!-- ================= CORE -> WIFI CONTROLLER ================= -->
+
+        <path class="flow wifi" d="M620 430 L185 505" />
+        <path class="flow wifi delay-2" d="M185 505 L185 625" />
+        <path class="flow wifi reverse delay-5" d="M185 625 L620 430" />
+
+        <!-- ================= NMS / ZABBIX GIÁM SÁT ================= -->
+
+        <path class="flow monitor" d="M1280 610 L930 510" />
+        <path class="flow monitor delay-1" d="M1280 630 L760 520" />
+        <path class="flow monitor delay-2" d="M1280 650 L600 520" />
+        <path class="flow monitor delay-3" d="M1280 670 L420 610" />
+        <path class="flow monitor delay-4" d="M1280 690 L1200 690" />
+
+        <!-- ================= HIỆU ỨNG ĐIỂM DỮ LIỆU CHẠY ================= -->
+
+        <circle class="packet p-internet" r="5">
+          <animateMotion dur="3s" repeatCount="indefinite" path="M270 120 L560 195" />
+        </circle>
+
+        <circle class="packet p-backbone" r="5">
+          <animateMotion dur="2s" repeatCount="indefinite" path="M690 215 L690 285 L690 390" />
+        </circle>
+
+        <circle class="packet p-access" r="5">
+          <animateMotion dur="3.5s" repeatCount="indefinite" path="M650 430 L610 515 L575 610" />
+        </circle>
+
+        <circle class="packet p-server" r="5">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M810 390 L1220 390 L1220 150" />
+        </circle>
+
+        <circle class="packet p-camera" r="5">
+          <animateMotion dur="4s" repeatCount="indefinite" path="M900 535 L1220 690 L1300 690" />
+        </circle>
+
+        <circle class="packet p-wifi" r="5">
+          <animateMotion dur="4.5s" repeatCount="indefinite" path="M620 430 L185 505 L185 625" />
+        </circle>
+
+      </svg>
+
+      <!-- Lớp nhãn nhỏ trạng thái -->
+      <div class="status status-internet">Internet 1Gbps</div>
+      <div class="status status-core">Core / Backbone</div>
+      <div class="status status-access">Access Layer</div>
+      <div class="status status-camera">Camera CCTV</div>
+      <div class="status status-server">Server / Data Center</div>
+
+    </div>
   </div>
+
+  <script>
+    function toggleTraffic() {
+      const map = document.getElementById("mapWrap");
+      map.classList.toggle("traffic-off");
+    }
+
+    function toggleFullscreen() {
+      const elem = document.documentElement;
+
+      if (!document.fullscreenElement) {
+        elem.requestFullscreen().catch(err => {
+          alert("Không bật được toàn màn hình: " + err.message);
+        });
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    function setSpeed(speed) {
+      const map = document.getElementById("mapWrap");
+
+      map.classList.remove("speed-slow", "speed-normal", "speed-fast");
+
+      if (speed === "slow") {
+        map.classList.add("speed-slow");
+      } else if (speed === "fast") {
+        map.classList.add("speed-fast");
+      } else {
+        map.classList.add("speed-normal");
+      }
+    }
+  </script>
 </body>
 </html>
