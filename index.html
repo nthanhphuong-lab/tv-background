@@ -4,107 +4,330 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sơ đồ mạng AGU động</title>
-  <link rel="stylesheet" href="./style.css" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #111;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /*
+      Khung chính giữ đúng tỷ lệ ảnh 1650 x 928.
+      Nếu ảnh network.png của bạn khác kích thước này thì báo mình sửa lại.
+    */
+    .map-wrap {
+      position: relative;
+      width: min(100vw, calc(100vh * 1650 / 928));
+      height: min(100vh, calc(100vw * 928 / 1650));
+      background: white;
+      overflow: hidden;
+    }
+
+    /*
+      Cách overlay chắc chắn:
+      img và svg đều absolute cùng top/left 0.
+    */
+    .network-img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 1;
+    }
+
+    .traffic-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+
+      display: block;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    svg,
+    svg path {
+      fill: none !important;
+    }
+
+    .flow {
+      fill: none !important;
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 14 14;
+      animation: dataFlow 1.2s linear infinite;
+      opacity: 0.95;
+    }
+
+    .internet {
+      stroke: #005cff;
+    }
+
+    .backbone {
+      stroke: #ff1f1f;
+      stroke-width: 5;
+    }
+
+    .core {
+      stroke: #003ed6;
+    }
+
+    .access {
+      stroke: #00a63c;
+    }
+
+    .server {
+      stroke: #ff8a00;
+    }
+
+    .camera {
+      stroke: #009b4a;
+    }
+
+    .wifi {
+      stroke: #7a2cff;
+    }
+
+    .vpn {
+      stroke: #8d3cff;
+    }
+
+    .monitor {
+      stroke: #00a6c8;
+      stroke-width: 3;
+      stroke-dasharray: 8 10;
+    }
+
+    .reverse {
+      animation-name: dataFlowReverse;
+    }
+
+    .delay-1 {
+      animation-delay: -0.2s;
+    }
+
+    .delay-2 {
+      animation-delay: -0.4s;
+    }
+
+    .delay-3 {
+      animation-delay: -0.6s;
+    }
+
+    .delay-4 {
+      animation-delay: -0.8s;
+    }
+
+    .delay-5 {
+      animation-delay: -1s;
+    }
+
+    @keyframes dataFlow {
+      from {
+        stroke-dashoffset: 0;
+      }
+
+      to {
+        stroke-dashoffset: -56;
+      }
+    }
+
+    @keyframes dataFlowReverse {
+      from {
+        stroke-dashoffset: 0;
+      }
+
+      to {
+        stroke-dashoffset: 56;
+      }
+    }
+
+    .packet {
+      opacity: 0.95;
+    }
+
+    .p-internet {
+      fill: #005cff;
+    }
+
+    .p-backbone {
+      fill: #ff1f1f;
+    }
+
+    .p-access {
+      fill: #00a63c;
+    }
+
+    .p-server {
+      fill: #ff8a00;
+    }
+
+    .p-camera {
+      fill: #009b4a;
+    }
+
+    .toolbar {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+    }
+
+    .toolbar button {
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      background: #004a99;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .traffic-off .flow,
+    .traffic-off .packet {
+      opacity: 0;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="screen">
 
-    <div class="map-wrap">
-
-      <!-- Ảnh nền -->
-      <img src="./network.png" class="network-img" alt="Sơ đồ mạng AGU" />
-
-      <!-- SVG phải nằm BÊN TRONG map-wrap, ngay sau img -->
-      <svg class="traffic-layer" viewBox="0 0 1650 928" preserveAspectRatio="none">
-
-        <!-- Internet -> Peplink -->
-        <path class="flow internet" d="M280 115 L570 195" />
-        <path class="flow internet delay-1" d="M380 105 L600 195" />
-        <path class="flow internet delay-2" d="M480 100 L630 195" />
-        <path class="flow internet delay-3" d="M580 100 L660 195" />
-        <path class="flow internet delay-4" d="M780 100 L725 195" />
-        <path class="flow internet delay-5" d="M980 110 L785 195" />
-
-        <!-- Peplink -> Firewall -> Core -->
-        <path class="flow backbone" d="M690 215 L690 285" />
-        <path class="flow backbone delay-1" d="M690 315 L690 390" />
-
-        <!-- Core HA -->
-        <path class="flow backbone fast-line" d="M620 395 L805 395" />
-        <path class="flow backbone reverse delay-2" d="M805 410 L620 410" />
-
-        <!-- Core -> Distribution -->
-        <path class="flow core delay-1" d="M610 430 L500 515" />
-        <path class="flow core delay-2" d="M650 430 L610 515" />
-        <path class="flow core delay-3" d="M720 430 L760 515" />
-        <path class="flow core delay-4" d="M800 430 L910 515" />
-
-        <!-- Distribution -> Access Layer -->
-        <path class="flow access delay-1" d="M500 535 L330 610" />
-        <path class="flow access delay-2" d="M520 535 L455 610" />
-        <path class="flow access delay-3" d="M610 535 L575 610" />
-        <path class="flow access delay-4" d="M650 535 L700 610" />
-        <path class="flow access delay-5" d="M760 535 L825 610" />
-        <path class="flow access delay-1" d="M790 535 L950 610" />
-        <path class="flow access delay-2" d="M900 535 L1070 610" />
-
-        <path class="flow access delay-3" d="M500 535 L335 720" />
-        <path class="flow access delay-4" d="M600 535 L470 720" />
-        <path class="flow access delay-5" d="M700 535 L610 720" />
-        <path class="flow access delay-1" d="M800 535 L760 720" />
-        <path class="flow access delay-2" d="M900 535 L905 720" />
-        <path class="flow access delay-3" d="M910 535 L1040 720" />
-        <path class="flow access delay-4" d="M920 535 L1160 720" />
-
-        <!-- Core -> Server / Data Center -->
-        <path class="flow server delay-1" d="M810 390 L1220 390 L1220 160" />
-        <path class="flow server reverse delay-3" d="M1220 260 L850 400" />
-
-        <!-- Core -> DMZ / VPN -->
-        <path class="flow vpn delay-1" d="M730 315 L1030 315" />
-        <path class="flow vpn delay-2" d="M1030 320 L1385 320 L1385 180" />
-
-        <!-- Core -> Camera -->
-        <path class="flow camera delay-1" d="M900 535 L1220 690" />
-        <path class="flow camera delay-2" d="M1220 690 L1300 690" />
-        <path class="flow camera reverse delay-4" d="M1300 710 L900 550" />
-
-        <!-- Core -> WiFi -->
-        <path class="flow wifi delay-1" d="M620 430 L185 505" />
-        <path class="flow wifi delay-2" d="M185 505 L185 625" />
-        <path class="flow wifi reverse delay-5" d="M185 625 L620 430" />
-
-        <!-- Zabbix / NMS -->
-        <path class="flow monitor delay-1" d="M1280 610 L930 510" />
-        <path class="flow monitor delay-2" d="M1280 630 L760 520" />
-        <path class="flow monitor delay-3" d="M1280 650 L600 520" />
-        <path class="flow monitor delay-4" d="M1280 670 L420 610" />
-
-        <!-- Packet chạy -->
-        <circle class="packet p-internet" r="5">
-          <animateMotion dur="3s" repeatCount="indefinite" path="M280 115 L570 195" />
-        </circle>
-
-        <circle class="packet p-backbone" r="5">
-          <animateMotion dur="2s" repeatCount="indefinite" path="M690 215 L690 285 L690 390" />
-        </circle>
-
-        <circle class="packet p-access" r="5">
-          <animateMotion dur="3.5s" repeatCount="indefinite" path="M650 430 L610 515 L575 610" />
-        </circle>
-
-        <circle class="packet p-server" r="5">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M810 390 L1220 390 L1220 160" />
-        </circle>
-
-        <circle class="packet p-camera" r="5">
-          <animateMotion dur="4s" repeatCount="indefinite" path="M900 535 L1220 690 L1300 690" />
-        </circle>
-
-      </svg>
-
-    </div>
+  <div class="toolbar">
+    <button onclick="toggleTraffic()">Bật / Tắt hiệu ứng</button>
+    <button onclick="toggleFullscreen()">Toàn màn hình</button>
   </div>
+
+  <div id="mapWrap" class="map-wrap">
+
+    <!-- Hình nền -->
+    <img src="./network.png" class="network-img" alt="Sơ đồ mạng AGU">
+
+    <!-- Lớp chạy nằm ĐÈ TRÊN hình -->
+    <svg class="traffic-layer" viewBox="0 0 1650 928" preserveAspectRatio="none">
+
+      <!-- Internet -> Peplink -->
+      <path class="flow internet delay-1" d="M280 115 L570 195" />
+      <path class="flow internet delay-2" d="M380 105 L600 195" />
+      <path class="flow internet delay-3" d="M480 100 L630 195" />
+      <path class="flow internet delay-4" d="M580 100 L660 195" />
+      <path class="flow internet delay-5" d="M780 100 L725 195" />
+      <path class="flow internet delay-1" d="M980 110 L785 195" />
+
+      <!-- Peplink -> Firewall -> Core -->
+      <path class="flow backbone" d="M690 215 L690 285" />
+      <path class="flow backbone delay-1" d="M690 315 L690 390" />
+
+      <!-- Core HA -->
+      <path class="flow backbone delay-2" d="M620 395 L805 395" />
+      <path class="flow backbone reverse delay-3" d="M805 410 L620 410" />
+
+      <!-- Core -> Distribution -->
+      <path class="flow core delay-1" d="M610 430 L500 515" />
+      <path class="flow core delay-2" d="M650 430 L610 515" />
+      <path class="flow core delay-3" d="M720 430 L760 515" />
+      <path class="flow core delay-4" d="M800 430 L910 515" />
+
+      <!-- Distribution -> Access Layer -->
+      <path class="flow access delay-1" d="M500 535 L330 610" />
+      <path class="flow access delay-2" d="M520 535 L455 610" />
+      <path class="flow access delay-3" d="M610 535 L575 610" />
+      <path class="flow access delay-4" d="M650 535 L700 610" />
+      <path class="flow access delay-5" d="M760 535 L825 610" />
+      <path class="flow access delay-1" d="M790 535 L950 610" />
+      <path class="flow access delay-2" d="M900 535 L1070 610" />
+
+      <path class="flow access delay-3" d="M500 535 L335 720" />
+      <path class="flow access delay-4" d="M600 535 L470 720" />
+      <path class="flow access delay-5" d="M700 535 L610 720" />
+      <path class="flow access delay-1" d="M800 535 L760 720" />
+      <path class="flow access delay-2" d="M900 535 L905 720" />
+      <path class="flow access delay-3" d="M910 535 L1040 720" />
+      <path class="flow access delay-4" d="M920 535 L1160 720" />
+
+      <!-- Core -> Server / Data Center -->
+      <path class="flow server delay-1" d="M810 390 L1220 390 L1220 160" />
+      <path class="flow server reverse delay-3" d="M1220 260 L850 400" />
+
+      <!-- Core -> DMZ / VPN -->
+      <path class="flow vpn delay-1" d="M730 315 L1030 315" />
+      <path class="flow vpn delay-2" d="M1030 320 L1385 320 L1385 180" />
+
+      <!-- Core -> Camera -->
+      <path class="flow camera delay-1" d="M900 535 L1220 690" />
+      <path class="flow camera delay-2" d="M1220 690 L1300 690" />
+      <path class="flow camera reverse delay-4" d="M1300 710 L900 550" />
+
+      <!-- Core -> WiFi -->
+      <path class="flow wifi delay-1" d="M620 430 L185 505" />
+      <path class="flow wifi delay-2" d="M185 505 L185 625" />
+      <path class="flow wifi reverse delay-5" d="M185 625 L620 430" />
+
+      <!-- Zabbix / NMS -->
+      <path class="flow monitor delay-1" d="M1280 610 L930 510" />
+      <path class="flow monitor delay-2" d="M1280 630 L760 520" />
+      <path class="flow monitor delay-3" d="M1280 650 L600 520" />
+      <path class="flow monitor delay-4" d="M1280 670 L420 610" />
+
+      <!-- Chấm dữ liệu -->
+      <circle class="packet p-internet" r="5">
+        <animateMotion dur="3s" repeatCount="indefinite" path="M280 115 L570 195" />
+      </circle>
+
+      <circle class="packet p-backbone" r="5">
+        <animateMotion dur="2s" repeatCount="indefinite" path="M690 215 L690 285 L690 390" />
+      </circle>
+
+      <circle class="packet p-access" r="5">
+        <animateMotion dur="3.5s" repeatCount="indefinite" path="M650 430 L610 515 L575 610" />
+      </circle>
+
+      <circle class="packet p-server" r="5">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M810 390 L1220 390 L1220 160" />
+      </circle>
+
+      <circle class="packet p-camera" r="5">
+        <animateMotion dur="4s" repeatCount="indefinite" path="M900 535 L1220 690 L1300 690" />
+      </circle>
+
+    </svg>
+
+  </div>
+
+  <script>
+    function toggleTraffic() {
+      document.getElementById("mapWrap").classList.toggle("traffic-off");
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
+
 </body>
 </html>
