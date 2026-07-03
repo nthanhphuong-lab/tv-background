@@ -4,19 +4,22 @@
   padding: 0;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
   width: 100%;
+  height: 100%;
   overflow: hidden;
   background: #000;
 }
 
-/* Ảnh nền toàn màn hình */
+/* Ảnh nền tự co giãn vừa mọi màn hình */
 .bg {
   position: fixed;
   inset: 0;
-  background-image: url('assets/AGU network AI v2.png'); /* Đường dẫn ảnh của bạn */
-  background-size: cover;      /* phủ kín màn hình */
-  background-position: center; /* canh giữa ảnh */
+
+  background-image: url("assets/AGU network AI v2.png");
+  background-size: contain;        /* Hiển thị đủ ảnh, không bị cắt */
+  background-position: center;     /* Canh giữa */
   background-repeat: no-repeat;
+  background-color: #000;          /* Nền đen nếu màn hình lệch tỷ lệ */
 }
